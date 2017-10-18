@@ -1,10 +1,13 @@
 var mongoose = require('mongoose')
+var url = "mongodb://localhost:27017/test" // 连接mongodb的url
+mongoose.connect(url, {useMongoClient: true,}); // 连接数据库
 var Schema = mongoose.Schema;
 
 
 
 var UserSchema = new Schema({
-    name: String
+    name: {type: String, defaulte: 'erichedgedog'},
+    pwd: {type: String, defaulte: '123456'}
 })
 
 UserSchema.methods.speak = function () {
