@@ -12,10 +12,11 @@ app.set('superSecret', 'hahahaha') // secrete key
 // 任何路由的每次request都执行
 router.use(function(req, res, next) {
     // 打印
+    res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     console.log('Something is happening.');
     next(); // 在这里会将request交给下一个中间件，如果这个中间件后面没有其他中间件，请求会交给匹配的路由作处理
 });
-
 
 router.get('/articles', function(req, res) {
     res.json({ message: 'articles' });   
@@ -45,7 +46,7 @@ router.post('/user', function(req, res) {
 // 必须要用lean()处理下从moongoDB 拉回来的数据， 这个数据不是一个 plain object 
 // 如果不处理 会报错 Expect 'playload' to be a plain object
 router.post('/auth', function(req, res) {
-
+		console.log(req.body.name)
     // find the user
     User.findOne({
         name: req.body.name
@@ -71,7 +72,7 @@ router.post('/auth', function(req, res) {
                 // json格式返回token
                 res.json({
                     success: true,
-                    message: 'Enjoy your!',
+                    message: '登陆成功',
                     token: token
                 });
             }
