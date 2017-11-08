@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express()
 var User = require('./models/user')
+var Articles = require('./models/articles')
 var jwt = require('jsonwebtoken')
 // var user = require('./controllers/user')
 // API路由配置
@@ -13,14 +14,11 @@ app.set('superSecret', 'hahahaha') // secrete key
 router.use(function(req, res, next) {
     // 打印
     res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     console.log('Something is happening.');
     next(); // 在这里会将request交给下一个中间件，如果这个中间件后面没有其他中间件，请求会交给匹配的路由作处理
 });
 
-router.get('/articles', function(req, res) {
-    res.json({ message: 'articles' });   
-});
 
 router.post('/user', function(req, res) {
         var users = new User();      // 创建一个Bear model的实例
@@ -73,7 +71,8 @@ router.post('/auth', function(req, res) {
                 res.json({
                     success: true,
                     message: '登陆成功',
-                    token: token
+                    token: token,
+                    isAdmin: user.isAdmin
                 });
             }
 
@@ -82,6 +81,31 @@ router.post('/auth', function(req, res) {
     });
 });    
 
-    
+router.post('/addArticle', function(req, res) {
+    var article = new Articles();      // 创建一个Bear model的实例
+	article.title = req.body.title;  // 从request取出name参数的值然后设置bear的name字段
+    ariticle.content = req.body.content;
+    systemDate = new Date()
+    article.date = systemDate.getFullYear()
+    yield article.save(function(err, articles, numberAffected) {
+    	if (err){
+    		res.send(err) 
+    	} else {
+    		res.json({
+                    success: true,
+                    message: '添加成功',
+                });
+            }
+    	}
+    });
+});
+
+
+router.get('/articles', function(req, res) {
+    Articles.find({}, function(err, articles) {
+    	res.json(articles);
+  	}); 
+});
+
 
 module.exports = router
