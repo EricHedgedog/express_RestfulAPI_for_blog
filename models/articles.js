@@ -5,10 +5,16 @@ var Schema = mongoose.Schema;
 
 
 
-var AriticleSchema = new Schema({
-    title: type: String,
-    content: type: String,
-    date: type: Date
+var ArticleSchema = new Schema({
+    title: String,
+    content: String,
+    author: String,
+    category: String,
+    comment: [{
+    	body: String,
+    	date: Date
+    }],
+    date: {type:Date, default: Date.now},
 })
 
 

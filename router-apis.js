@@ -44,7 +44,7 @@ router.post('/user', function(req, res) {
 // 必须要用lean()处理下从moongoDB 拉回来的数据， 这个数据不是一个 plain object 
 // 如果不处理 会报错 Expect 'playload' to be a plain object
 router.post('/auth', function(req, res) {
-		console.log(req.body.name)
+		// console.log(req.body.name)
     // find the user
     User.findOne({
         name: req.body.name
@@ -84,26 +84,36 @@ router.post('/auth', function(req, res) {
 router.post('/addArticle', function(req, res) {
     var article = new Articles();      // 创建一个Bear model的实例
 	article.title = req.body.title;  // 从request取出name参数的值然后设置bear的name字段
-    ariticle.content = req.body.content;
-    systemDate = new Date()
-    article.date = systemDate.getFullYear()
-    yield article.save(function(err, articles, numberAffected) {
-    	if (err){
-    		res.send(err) 
-    	} else {
-    		res.json({
-                    success: true,
-                    message: '添加成功',
-                });
-            }
-    	}
-    });
+    article.content = req.body.content;
+    // systemDate = new Date()
+    // article.date = systemDate
+    article.save(
+		function(err){	       
+			if(err){
+			    res.json({success:false,messafe:"博客发布失败"})
+			} else {
+	       		res.json({success:true,message:"博客发布成功"})
+			}
+	   })
 });
 
 
 router.get('/articles', function(req, res) {
-    Articles.find({}, function(err, articles) {
-    	res.json(articles);
+	var page = req.query.page
+	var rows = parseInt(req.query.rows)
+    Articles.find({}).sort({"date":-1}).skip((page-1)*rows).limit(rows).exec(function(err, articles) {
+    	if(err){
+    		res.json({success:false,messafe:err})
+    	} else {
+    		Articles.find(function(err,result) {
+
+	    		res.json({
+		            success: true,
+		            list: articles,
+		            total: result.length
+		        });
+    		})
+    	}
   	}); 
 });
 

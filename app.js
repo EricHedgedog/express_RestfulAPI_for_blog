@@ -3,7 +3,6 @@ var app = express(); // 获得express定义的app，app对象此时代表整个w
 var port = process.env.PORT || 3000;        // set our port
 var bodyParser = require('body-parser');
 var router = express.Router()
-var jwt = require('jsonwebtoken')
 var User = require("./models/user")
 var apiRouters = require("./router-apis")
 
