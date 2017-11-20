@@ -8,7 +8,7 @@ var Schema = mongoose.Schema;
 var ArticleSchema = new Schema({
     title: String,
     content: String,
-    author: String,
+    author:  {type:String, default: 'EricHedgedog'}, 
     category: String,
     comment: [{
     	body: String,

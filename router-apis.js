@@ -41,6 +41,7 @@ router.post('/user', function(req, res) {
         
     });
 
+// 验证登陆
 // 必须要用lean()处理下从moongoDB 拉回来的数据， 这个数据不是一个 plain object 
 // 如果不处理 会报错 Expect 'playload' to be a plain object
 router.post('/auth', function(req, res) {
@@ -81,23 +82,8 @@ router.post('/auth', function(req, res) {
     });
 });    
 
-router.post('/addArticle', function(req, res) {
-    var article = new Articles();      // 创建一个Bear model的实例
-	article.title = req.body.title;  // 从request取出name参数的值然后设置bear的name字段
-    article.content = req.body.content;
-    // systemDate = new Date()
-    // article.date = systemDate
-    article.save(
-		function(err){	       
-			if(err){
-			    res.json({success:false,messafe:"博客发布失败"})
-			} else {
-	       		res.json({success:true,message:"博客发布成功"})
-			}
-	   })
-});
 
-
+// 获取所有文章列表
 router.get('/articles', function(req, res) {
 	var page = req.query.page
 	var rows = parseInt(req.query.rows)
@@ -117,5 +103,22 @@ router.get('/articles', function(req, res) {
   	}); 
 });
 
+// 新增文章
+router.post('/addArticle', function(req, res) {
+    var article = new Articles();      // 创建一个Bear model的实例
+	article.title = req.body.title;  // 从request取出name参数的值然后设置bear的name字段
+    article.content = req.body.content;
+    // article.reder = req.body.reder;  render以后的html结构
+    // systemDate = new Date()
+    // article.date = systemDate
+    article.save(
+		function(err){	       
+			if(err){
+			    res.json({success:false,message:"博客发布失败"})
+			} else {
+	       		res.json({success:true,message:"博客发布成功"})
+			}
+	   })
+});
 
 module.exports = router
