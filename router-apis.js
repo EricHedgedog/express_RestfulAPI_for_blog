@@ -108,7 +108,7 @@ router.post('/addArticle', function(req, res) {
     var article = new Articles();      // 创建一个Bear model的实例
 	article.title = req.body.title;  // 从request取出name参数的值然后设置bear的name字段
     article.content = req.body.content;
-    // article.reder = req.body.reder;  render以后的html结构
+    article.render = req.body.render;  // render以后的html结构
     // systemDate = new Date()
     // article.date = systemDate
     article.save(
@@ -121,4 +121,23 @@ router.post('/addArticle', function(req, res) {
 	   })
 });
 
+// 删除文章
+router.post('/deleteArticle', function(req, res) {
+    var article = new Articles();      // 创建一个Bear model的实例
+	article.title = req.body.title;  // 从request取出name参数的值然后设置bear的name字段
+    article.content = req.body.content;
+    User.find( {name: req.body.name}, 'name pwd', function(err, user) {
+		if (err){
+			res.send(err) 
+			
+		} 
+		console.log('%s  is %s.', users.name, users.pwd)
+		// console.log(user)
+		if (user[0].name == users.name) {
+	 		res.json({ message: 'user is there!' });
+		} else {
+			res.json({message: 'null'})
+		}
+	});
+});
 module.exports = router
