@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express()
+var mongoose = require('mongoose')
 var User = require('./models/user')
 var Articles = require('./models/articles')
 var jwt = require('jsonwebtoken')
@@ -89,7 +90,7 @@ router.get('/articles', function(req, res) {
 	var rows = parseInt(req.query.rows)
     Articles.find({}).sort({"date":-1}).skip((page-1)*rows).limit(rows).exec(function(err, articles) {
     	if(err){
-    		res.json({success:false,messafe:err})
+    		res.json({success:false,message:err})
     	} else {
     		Articles.find(function(err,result) {
 
@@ -103,14 +104,29 @@ router.get('/articles', function(req, res) {
   	}); 
 });
 
+// 根据mongoDB 生产的 ObjectId获取文章详情
+router.get('/getArticle', function(req, res) {
+	var id = req.query.id
+	var sid = mongoose.Types.ObjectId(id)
+    Articles.find({'_id': sid}).exec(function(err, article) {
+    	if(err){
+    		res.json({success:false,message:err})
+    	} else {
+			res.json({
+	            success: true,
+	            list: article
+	        });
+    	}
+  	}); 
+});
 // 新增文章
 router.post('/addArticle', function(req, res) {
     var article = new Articles();      // 创建一个Bear model的实例
 	article.title = req.body.title;  // 从request取出name参数的值然后设置bear的name字段
     article.content = req.body.content;
     article.render = req.body.render;  // render以后的html结构
-    // systemDate = new Date()
-    // article.date = systemDate
+    systemDate = new Date()
+    article.date = systemDate
     article.save(
 		function(err){	       
 			if(err){
@@ -123,7 +139,6 @@ router.post('/addArticle', function(req, res) {
 
 // 删除文章
 router.post('/deleteArticle', function(req, res) {
-    // var article = new Articles(); 
     var articleId = req.body.id
     Articles.remove({'_id': articleId }).exec(function(err) {
     	if(err){
@@ -132,5 +147,23 @@ router.post('/deleteArticle', function(req, res) {
     		res.json({success:true,message:"博客删除成功"})
     	}
 	})
+});
+
+// 修改文章
+router.post('/editArticle', function(req, res) {
+    var id = req.body.id
+	var sid = mongoose.Types.ObjectId(id)
+	var article = new Articles(); 
+	article._id = sid
+	article.title = req.body.title;  // 从request取出name参数的值然后设置bear的name字段
+    article.content = req.body.content;
+    article.render = req.body.render;  // render以后的html结构
+  	article.update(({'_id': sid},{$set:{'title':article.title, 'content':article.content, 'render':article.render }})).exec(function(err, article) {
+    	if(err){
+    		res.json({success:false,message:err})
+    	} else {
+			res.json({success:true,message:"博客修改成功", list: article})
+    	}
+  	}); 
 });
 module.exports = router

@@ -15,7 +15,7 @@ var ArticleSchema = new Schema({
     	body: String,
     	date: Date
     }],
-    date: {type:Date, default: Date.now},
+    date: Date,
 })
 
 
